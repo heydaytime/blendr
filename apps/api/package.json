@@ -1,0 +1,14 @@
+{
+  "name": "@blendr/api",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "module": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "bun run src/index.ts",
+    "dev": "bun run --watch src/index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}

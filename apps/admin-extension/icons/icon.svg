@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <rect width="128" height="128" fill="#1a1a1a"/>
+  <!-- Blue wave -->
+  <path d="M8 64 Q24 24 40 64 Q56 104 72 64" fill="none" stroke="#5B6EF5" stroke-width="10" stroke-linecap="round"/>
+  <!-- Teal wave (offset) -->
+  <path d="M40 64 Q56 24 72 64 Q88 104 104 64 Q112 40 120 48" fill="none" stroke="#2EC4B6" stroke-width="10" stroke-linecap="round"/>
+  <!-- Blend dot -->
+  <circle cx="64" cy="64" r="8.8" fill="#2EC4B6"/>
+  <circle cx="64" cy="64" r="4.8" fill="#5B6EF5"/>
+</svg>

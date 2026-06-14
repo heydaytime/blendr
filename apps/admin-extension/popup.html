@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      width: 380px;
+      padding: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+    }
+    
+    /* Status Display */
+    .status-section {
+      background: #2a2a2a;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid #333;
+      font-size: 12px;
+    }
+    
+    .status-row:last-child {
+      border-bottom: none;
+    }
+    
+    .status-label {
+      color: #888;
+    }
+    
+    .status-value {
+      font-family: monospace;
+      color: #fff;
+    }
+    
+    .status-value.playing {
+      color: #00ff88;
+    }
+    
+    .status-value.paused {
+      color: #ffaa00;
+    }
+    
+    .status-value.error {
+      color: #ff4444;
+    }
+    
+    .status-value.success {
+      color: #00ff88;
+    }
+    
+    /* Main Button */
+    .main-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 12px;
+    }
+    
+    .main-btn.start {
+      background: #9146ff;
+      color: white;
+    }
+    
+    .main-btn.start:hover {
+      background: #7c3aed;
+    }
+    
+    .main-btn.stop {
+      background: #ff4444;
+      color: white;
+    }
+    
+    .main-btn.stop:hover {
+      background: #cc3333;
+    }
+    
+    .main-btn.failed {
+      background: #ff6600;
+      color: white;
+      animation: pulse 1s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    
+    .main-btn:disabled {
+      background: #444;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+    
+    /* Twitch Controls */
+    .twitch-section {
+      background: #2a2a2a;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .section-title {
+      font-size: 11px;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+    
+    .input-group {
+      margin-bottom: 10px;
+    }
+    
+    .input-group:last-child {
+      margin-bottom: 0;
+    }
+    
+    .input-label {
+      display: block;
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 4px;
+    }
+    
+    .input-field {
+      width: 100%;
+      padding: 8px;
+      background: #1a1a1a;
+      border: 1px solid #444;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 13px;
+    }
+    
+    .input-field:focus {
+      outline: none;
+      border-color: #9146ff;
+    }
+    
+    /* Position Grid */
+    .position-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 4px;
+      width: 100px;
+      height: 75px;
+      margin: 0 auto;
+    }
+    
+    .position-cell {
+      background: #3a3a3a;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #666;
+      border: 2px solid transparent;
+    }
+    
+    .position-cell:hover {
+      background: #4a4a4a;
+    }
+    
+    .position-cell.active {
+      background: #9146ff;
+      color: white;
+      border-color: #00ff88;
+    }
+    
+    /* Packet Preview */
+    .packet-section {
+      background: #0a0a0a;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 12px;
+    }
+    
+    .packet-title {
+      font-size: 10px;
+      color: #666;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    
+    .packet-preview {
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      color: #00ff88;
+      background: #1a1a1a;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+    
+    .packet-preview.error {
+      color: #ff4444;
+    }
+    
+    /* Session Info */
+    .session-info {
+      background: #2a2a2a;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .session-id {
+      font-family: monospace;
+      font-size: 12px;
+      color: #00ff88;
+      word-break: break-all;
+    }
+    
+    .share-link {
+      font-size: 11px;
+      color: #888;
+      margin-top: 8px;
+    }
+    
+    .copy-btn {
+      background: #3a3a3a;
+      border: none;
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    
+    .copy-btn:hover {
+      background: #4a4a4a;
+    }
+    
+    /* Hidden */
+    .hidden {
+      display: none !important;
+    }
+    
+    /* Toggle Switch */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+    
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #444;
+      transition: .3s;
+      border-radius: 24px;
+    }
+    
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    
+    .toggle-switch input:checked + .toggle-slider {
+      background-color: #9146ff;
+    }
+    
+    .toggle-switch input:checked + .toggle-slider:before {
+      transform: translateX(20px);
+    }
+    
+    /* Twitch Controls Wrapper */
+    .twitch-controls-wrapper {
+      transition: opacity 0.3s ease;
+    }
+    
+    .twitch-controls-wrapper.disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Connection Status -->
+  <div class="status-section">
+    <div class="status-row">
+      <span class="status-label">Status</span>
+      <span id="status-value" class="status-value">Idle</span>
+    </div>
+    <div class="status-row">
+      <span class="status-label">YouTube ID</span>
+      <span id="youtube-id" class="status-value">-</span>
+    </div>
+    <div class="status-row">
+      <span class="status-label">Timestamp</span>
+      <span id="timestamp" class="status-value">-</span>
+    </div>
+    <div class="status-row">
+      <span class="status-label">State</span>
+      <span id="playing-state" class="status-value">-</span>
+    </div>
+    <div class="status-row">
+      <span class="status-label">Packets Sent</span>
+      <span id="packets-sent" class="status-value">0</span>
+    </div>
+  </div>
+
+  <!-- Warning message when broadcasting from another tab -->
+  <div id="other-tab-warning" class="status-section hidden" style="background: #ff6600; color: white; margin-bottom: 12px;">
+    <div style="font-weight: bold; margin-bottom: 8px;">⚠️ Broadcasting from Another Tab</div>
+    <div id="other-tab-info" style="font-size: 11px; margin-bottom: 12px;">The extension is currently broadcasting from a different tab. Controls are disabled here.</div>
+    <button id="switch-tab-btn" class="main-btn" style="background: white; color: #ff6600; font-size: 12px; padding: 8px; width: auto; display: inline-block;">Switch to This Tab</button>
+  </div>
+
+  <!-- Main Button -->
+  <button id="broadcast-btn" class="main-btn start">Start Broadcasting</button>
+  
+  <!-- Check State Button (always visible) -->
+  <button id="check-state-btn" class="main-btn start" style="background: #3a3a3a; margin-top: 8px; font-size: 12px; padding: 8px;">Check Current YouTube State</button>
+
+  <!-- Twitch Controls -->
+  <div class="twitch-section">
+    <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+      <span>Twitch Overlay</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="twitch-toggle">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    
+    <div id="twitch-controls" class="twitch-controls-wrapper disabled">
+      <div class="input-group">
+        <label class="input-label">Channel ID</label>
+        <input type="text" id="twitch-id" class="input-field" placeholder="e.g., ninja, shroud">
+      </div>
+      
+      <div class="input-group">
+        <label class="input-label">Position</label>
+        <div class="position-grid" id="position-grid">
+          <div class="position-cell" data-position="top-left">TL</div>
+          <div class="position-cell" data-position="top-right">TR</div>
+          <div class="position-cell" data-position="bottom-left">BL</div>
+          <div class="position-cell active" data-position="bottom-right">BR</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Session Info (shown when broadcasting) -->
+  <div id="session-section" class="session-info hidden">
+    <div class="section-title">Session</div>
+    <div class="session-id" id="session-id"></div>
+    <div class="share-link">
+      <span id="share-link-text"></span>
+      <button class="copy-btn" id="copy-btn">Copy</button>
+    </div>
+    <button id="redirect-btn" class="main-btn" style="background: #9146ff; color: white; margin-top: 10px; font-size: 12px; padding: 10px;">Redirect Users to Twitch</button>
+  </div>
+
+  <!-- Packet Preview -->
+  <div class="packet-section">
+    <div class="packet-title">Last Packet Sent</div>
+    <div id="packet-preview" class="packet-preview">Waiting to start...</div>
+  </div>
+
+  <!-- Debug Log -->
+  <div class="packet-section">
+    <div class="packet-title">Debug Log</div>
+    <div id="debug-log" class="packet-preview" style="max-height: 150px; font-size: 9px; color: #aaa;">Extension loaded...</div>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

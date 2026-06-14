@@ -1,0 +1,15 @@
+{
+  "name": "blendr",
+  "version": "1.0.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "packageManager": "pnpm@9.15.4",
+  "scripts": {
+    "dev": "./scripts/dev-local.sh",
+    "build:website": "pnpm --dir apps/website build",
+    "dev:website": "pnpm --dir apps/website dev",
+    "start:api": "./scripts/start-api.sh",
+    "typecheck:api": "cd apps/api && bunx tsc --noEmit",
+    "package:extension": "./scripts/package-extension.sh"
+  }
+}

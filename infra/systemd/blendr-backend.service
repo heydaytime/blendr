@@ -1,0 +1,22 @@
+[Unit]
+Description=Blendr Backend
+After=network-online.target redis-server.service
+Wants=network-online.target
+Requires=redis-server.service
+
+[Service]
+Type=simple
+User=heyday
+Group=heyday
+WorkingDirectory=/opt/blendr/apps/api
+EnvironmentFile=/etc/blendr/backend.env
+ExecStart=/home/heyday/.bun/bin/bun run src/index.ts
+Restart=on-failure
+RestartSec=5
+SyslogIdentifier=blendr-backend
+StandardOutput=journal
+StandardError=journal
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
